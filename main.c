@@ -13,12 +13,12 @@ int main(int argc, char** argv) {
   const int screenHeight = 600;
   Player p;
   Camera2D camera;
-  RenderTexture2D map_fb;
+  Map map;
 
   // Initialization
   InitWindow(screenWidth, screenHeight, "Game");
 
-  render_tmxmap_to_frame_buf("assets/map.tmx", &map_fb);
+  init_map(&map);
 
   player_init(&p, (float)screenWidth/2, (float)screenHeight/2);
 
@@ -29,17 +29,13 @@ int main(int argc, char** argv) {
 
   SetTargetFPS(60);
 
-  int **collision_map = generate_collision_map("assets/map.tmx");
-  if (!collision_map) {
-    CloseWindow();
-    return -1;
-  }
+  load_map(&map);
 
   // main loop
   while (!WindowShouldClose()) {
     // update stuff here
     float dt = GetFrameTime();
-    player_update(&p, dt, collision_map);
+    player_update(&p, dt);
 
     camera.target = p.position;
 
@@ -49,15 +45,13 @@ int main(int argc, char** argv) {
     ClearBackground(bgColor);
 
     BeginMode2D(camera);
-      draw_map(&map_fb);
+      draw_map(&map);
       player_draw(&p);
     EndMode2D();
 
     EndDrawing();
   }
 
-  UnloadRenderTexture(map_fb);
-  unload_collision_map(collision_map);
   CloseWindow();
   return 0;
 }

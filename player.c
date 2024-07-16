@@ -28,9 +28,6 @@ void player_init(Player *p, float x, float y) {
   p->frame_rate = 0.1f;
   p->frame_timer = 0.0f;
 
-  p->tile_x = (int)(p->position.x / TILE_WIDTH);
-  p->tile_y = (int)(p->position.y / TILE_HEIGHT);
-
   p->jumped = false;
   p->gravity = 9.81f;
   p->grounded = true;
@@ -83,7 +80,7 @@ void player_animate(Player *p, float dt) {
   p->frame_rec.y = 0;
 }
 
-void player_jump(Player *p, float dt, int **collision_map) {
+void player_jump(Player *p, float dt) {
   float initial_velocity = sqrtf(2.0f * p->jump_height * fabsf(p->gravity));
 
   if (IsKeyDown(KEY_SPACE) && p->grounded) {
@@ -101,33 +98,14 @@ void player_jump(Player *p, float dt, int **collision_map) {
   }
 
   if (p->position.y >= 289) {
-    p->position.y = 289;
     p->velocity.y = 0;
     p->jumped = false;
     p->grounded = true;
     p->current_animation = 0;
     p->flip_h = (p->direction == -1);
   }
-
-  // Check collision with tiles below the player
-  int player_tile_x = p->tile_x;
-  int player_tile_y = p->tile_y - 1;
-
-  if (collision_map[player_tile_y][player_tile_x] == 0) {
-    // No tile below, allow player to fall
-    p->velocity.y += p->gravity * dt;
-    p->position.y += p->velocity.y;
-    p->grounded = false;
-  } else {
-    // There's a tile below, stop falling
-    p->position.y = (player_tile_y - 1) * TILE_HEIGHT; // Adjust player position to be on top of the tile
-    p->velocity.y = 0;
-    p->jumped = false;
-    p->grounded = true;
-    p->current_animation = 0;
-
-  }
 }
+
 void player_move(Player *p, float dt) {
   p->velocity.x = 0;
   if (IsKeyDown(KEY_D)) {
@@ -149,14 +127,11 @@ void player_move(Player *p, float dt) {
   p->position.x += p->velocity.x * dt;
 }
 
-void player_update(Player *p, float dt, int **collision_map) {
+void player_update(Player *p, float dt) {
   player_move(p, dt);
   p->current_texture = p->textures[p->current_animation];
   player_animate(p, dt);
-  player_jump(p, dt, collision_map);
-  // Update tile coordinates based on new position
-  p->tile_x = (int)(p->position.x / TILE_WIDTH);
-  p->tile_y = (int)(p->position.y / TILE_HEIGHT);
+  player_jump(p, dt);
 }
 
 void player_cleanup(Player *p) {
