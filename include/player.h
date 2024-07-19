@@ -4,6 +4,7 @@
 #define NUM_FRAMES 4
 #define GRAVITY 0.5f
 
+#include "map.h"
 #include <raylib.h>
 #include <raymath.h>
 #include <stdbool.h>
@@ -25,7 +26,6 @@ struct Player {
   bool jumped;
   bool grounded;
 
-
   // Animation variables
   Texture2D textures[3];
   Texture2D current_texture;
@@ -42,11 +42,16 @@ struct Player {
 void player_init(Player *p, float x, float y);
 void player_draw(Player *p);
 
-void player_animate(Player *p, float dt);
-void player_move(Player *p, float dt);
-void player_jump(Player *p, float dt);
+bool check_collision(Rectangle rect1, Rectangle rect2);
+bool player_collides_with_map(Player *p, Map *map, float dt);
 
-void player_update(Player *p, float dt);
+void player_animate(Player *p, float dt);
+void player_move(Player *p, float dt, Map *map);
+void player_jump(Player *p, float dt, Map *map);
+
+int player_reset_position(Player *p);
+
+void player_update(Player *p, float dt, Map *map);
 
 void player_cleanup(Player *p);
 

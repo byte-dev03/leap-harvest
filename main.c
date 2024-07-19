@@ -35,9 +35,20 @@ int main(int argc, char** argv) {
   while (!WindowShouldClose()) {
     // update stuff here
     float dt = GetFrameTime();
-    player_update(&p, dt);
+    player_update(&p, dt, &map);
 
-    camera.target = p.position;
+    if (p.position.y > 450) {
+      player_reset_position(&p);
+      camera.target = p.position;
+      p.velocity.x = 0;
+      p.velocity.y = 0;
+      p.grounded = true;
+      p.jumped = false;
+    } else {
+      camera.target = p.position;
+    }
+
+
 
     // render stuff here
     BeginDrawing();

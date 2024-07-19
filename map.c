@@ -1,7 +1,4 @@
 #include "map.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
 void init_map(Map *m){ 
   m->tiles[0] = (Tile){LoadTexture("assets/dirt_block.png")};
@@ -33,6 +30,7 @@ void load_map(Map *m) {
     fclose(file);
 }
 
+
 void draw_map(Map *m) {
   for (int y = 0; y < MAP_HEIGHT; y++) {
     for (int x = 0; x < MAP_WIDTH; x++) {
@@ -40,6 +38,8 @@ void draw_map(Map *m) {
         DrawTexture(m->tiles[0].texture, x*TILE_SIZE, y*TILE_SIZE-20, WHITE);
       } else if(m->data[y][x] == 2) {
         DrawTexture(m->tiles[1].texture, x*TILE_SIZE, y*TILE_SIZE-20, WHITE);
+      } else {
+        DrawRectangle(x*TILE_SIZE, y*TILE_SIZE-20, 32, 32, BLACK);
       }
     }
   }

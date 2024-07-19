@@ -2,6 +2,9 @@
 #define MAP_H
 
 #include <raylib.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #define TILE_SIZE 32
 #define MAP_WIDTH 15
